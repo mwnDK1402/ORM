@@ -1,0 +1,34 @@
+{
+    "name": "Controls",
+    "maps": [
+        {
+            "name": "UI",
+            "id": "463c489e-048a-45de-8e3d-067bb70d9b8a",
+            "actions": [
+                {
+                    "name": "Next",
+                    "type": "Button",
+                    "id": "9ef3ccbe-4697-4cd5-ac0a-4ebbcdb53ef7",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "60a5d58c-5f8d-43b4-a943-ea597dde628d",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Next",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
