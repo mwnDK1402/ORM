@@ -13,11 +13,7 @@ namespace Project.EventSystem
 
         private void OnValidate() => enabled = down;
 
-        private void Start()
-        {
-            system = UnityEngine.EventSystems.EventSystem.current;
-            down.action.Enable();
-        }
+        private void Start() => system = UnityEngine.EventSystems.EventSystem.current;
 
         private void OnEnable() => down.action.performed += OnAction;
 
@@ -36,10 +32,13 @@ namespace Project.EventSystem
             system.SetSelectedGameObject(next.gameObject, new BaseEventData(system));
         }
 
-        private Selectable GetNewSelectable() =>
-            Keyboard.current.shiftKey.isPressed
-                ? system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnUp()
-                : system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
+        private Selectable GetNewSelectable()
+        {
+            var selected = system.currentSelectedGameObject.GetComponent<Selectable>();
+            return Keyboard.current.shiftKey.isPressed
+                ? selected.FindSelectableOnUp()
+                : selected.FindSelectableOnDown();
+        }
 
         private void OnDisable() => down.action.performed -= OnAction;
     }
