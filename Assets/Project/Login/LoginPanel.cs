@@ -1,8 +1,12 @@
-﻿using Project.GUI;
+﻿using JetBrains.Annotations;
+using Project.Database;
+using Project.GUI;
 using TMPro;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
+using Zenject;
 
 namespace Project.Login
 {
@@ -14,11 +18,18 @@ namespace Project.Login
 
         [SerializeField] private ErrorPanel error;
 
+        [field: SerializeField] public UnityEvent<User> LoggedIn { get; [UsedImplicitly] private set; }
+
+        private UserQueries queries;
+
         private void Reset()
         {
             loginButton = GetComponentInChildren<Button>();
             error = FindObjectOfType<ErrorPanel>(true);
         }
+
+        [Inject]
+        private void Construct(UserQueries queries) => this.queries = queries;
 
         private void Start() =>
             loginButton.OnClickAsObservable()
@@ -26,8 +37,8 @@ namespace Project.Login
                 {
                     if (!(ValidateUsername() && ValidatePassword())) return;
 
-                    // Retrieve user
-                    // Verify password
+                    if (queries.TryLogin(usernameField.text, passwordField.text, out var user)) LoggedIn.Invoke(user);
+                    else error.Show("Invalid username or password");
                 })
                 .AddTo(gameObject);
 
@@ -48,7 +59,7 @@ namespace Project.Login
             var passwordResult = Password.Validate(password);
             if (passwordResult == Password.ValidationResult.Valid)
                 return true;
-            
+
             error.Show(Password.GetError(passwordResult));
             return false;
         }
