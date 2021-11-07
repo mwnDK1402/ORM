@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:TextField picking-mode="Ignore" label="Username" name="username" binding-path="username" />
+    <ui:TextField picking-mode="Ignore" label="Password" name="password" binding-path="password" />
+    <ui:Button text="Insert user" display-tooltip-when-elided="true" />
+</ui:UXML>
