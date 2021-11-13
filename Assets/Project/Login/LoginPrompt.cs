@@ -10,26 +10,30 @@ using Zenject;
 
 namespace Project.Login
 {
-    public sealed class LoginPanel : MonoBehaviour
+    public sealed class LoginPrompt : MonoBehaviour
     {
-        [SerializeField] private TMP_InputField usernameField;
-        [SerializeField] private TMP_InputField passwordField;
-        [SerializeField] private Button loginButton;
-
-        [SerializeField] private ErrorPanel error;
-
         [field: SerializeField] public UnityEvent<User> LoggedIn { get; [UsedImplicitly] private set; }
 
+        private TMP_InputField usernameField;
+        private TMP_InputField passwordField;
+        private Button loginButton;
+        private ErrorPanel error;
         private UserQueries queries;
 
-        private void Reset()
-        {
-            loginButton = GetComponentInChildren<Button>();
-            error = FindObjectOfType<ErrorPanel>(true);
-        }
-
         [Inject]
-        private void Construct(UserQueries queries) => this.queries = queries;
+        private void Construct(
+            [Inject(Id = typeof(Username))] TMP_InputField usernameField,
+            [Inject(Id = typeof(Password))] TMP_InputField passwordField,
+            Button loginButton,
+            ErrorPanel error,
+            UserQueries queries)
+        {
+            this.loginButton = loginButton;
+            this.passwordField = passwordField;
+            this.usernameField = usernameField;
+            this.error = error;
+            this.queries = queries;
+        }
 
         private void Start() =>
             loginButton.OnClickAsObservable()
