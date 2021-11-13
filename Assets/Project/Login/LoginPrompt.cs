@@ -1,50 +1,54 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Project.Database;
 using Project.GUI;
 using TMPro;
 using UniRx;
-using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 using Zenject;
 
 namespace Project.Login
 {
-    public sealed class LoginPrompt : MonoBehaviour
+    [UsedImplicitly]
+    public sealed class LoginPrompt : IInitializable, IDisposable
     {
-        [field: SerializeField] public UnityEvent<User> LoggedIn { get; [UsedImplicitly] private set; }
+        private readonly SignalBus signalBus;
+        private readonly UserQueries queries;
+        private readonly TMP_InputField usernameField;
+        private readonly TMP_InputField passwordField;
+        private readonly Button loginButton;
+        private readonly ErrorPanel error;
+        
+        private IDisposable loginButtonObserver;
 
-        private TMP_InputField usernameField;
-        private TMP_InputField passwordField;
-        private Button loginButton;
-        private ErrorPanel error;
-        private UserQueries queries;
-
-        [Inject]
-        private void Construct(
-            [Inject(Id = typeof(Username))] TMP_InputField usernameField,
-            [Inject(Id = typeof(Password))] TMP_InputField passwordField,
+        public LoginPrompt(
+            SignalBus signalBus,
+            UserQueries queries,
+            TMP_InputField usernameField,
+            TMP_InputField passwordField,
             Button loginButton,
-            ErrorPanel error,
-            UserQueries queries)
+            ErrorPanel error)
         {
-            this.loginButton = loginButton;
-            this.passwordField = passwordField;
-            this.usernameField = usernameField;
-            this.error = error;
+            this.signalBus = signalBus;
             this.queries = queries;
+            this.usernameField = usernameField;
+            this.passwordField = passwordField;
+            this.loginButton = loginButton;
+            this.error = error;
         }
 
-        private void Start() =>
-            loginButton.OnClickAsObservable()
+        void IInitializable.Initialize() =>
+            loginButtonObserver = loginButton.OnClickAsObservable()
                 .Subscribe(_ =>
                 {
                     if (!(ValidateUsername() && ValidatePassword())) return;
 
-                    if (queries.TryLogin(usernameField.text, passwordField.text, out var user)) LoggedIn.Invoke(user);
+                    if (queries.TryLogin(usernameField.text, passwordField.text, out var user))
+                        signalBus.TryFire(new LoginSignal(user));
                     else error.Show("Invalid username or password");
-                })
-                .AddTo(gameObject);
+                });
+
+        void IDisposable.Dispose() => loginButtonObserver.Dispose();
 
         private bool ValidateUsername()
         {

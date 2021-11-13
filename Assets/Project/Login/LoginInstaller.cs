@@ -25,10 +25,20 @@ namespace Project.Login
 
         public override void InstallBindings()
         {
-            Container.BindInstance(usernameField).WithId(typeof(Username));
-            Container.BindInstance(passwordField).WithId(typeof(Password));
+            // This installs one SignalBus in the SceneContext.
+            // If the Signal spans multiple scenes, it should be put in a parent container like ProjectContext.
+            SignalBusInstaller.Install(Container);
+            Container.DeclareSignal<LoginSignal>();
+
             Container.BindInstance(loginButton);
             Container.BindInstance(errorPanel);
+
+            Container.BindInterfacesTo<LoginPrompt>()
+                .AsSingle()
+                .WithArguments(usernameField, passwordField);
+
+            Container.BindSignal<LoginSignal>()
+                .ToMethod(signal => Debug.Log($"Logging in {signal.User.Username}...", this));
         }
     }
 }

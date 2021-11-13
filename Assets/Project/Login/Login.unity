@@ -581,5 +581,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: LoginPrompt
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1964825862, guid: c4d4f174430706946b6b07b01a0e4cca, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: c4d4f174430706946b6b07b01a0e4cca, type: 3}
