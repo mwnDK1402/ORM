@@ -18,6 +18,6 @@ namespace Project.EditModeTests
         }
         
         [TestCase("ValidUsername", "ValidPassword", ExpectedResult = false)]
-        public bool Try_Login(string username, string password) => queries.TryLogin(username, password, out _);
+        public bool Find_User(string username, string password) => queries.FindUser(username, password) != default;
     }
 }

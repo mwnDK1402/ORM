@@ -11,6 +11,7 @@ namespace Project.Login
     {
         [SerializeField] private TMP_InputField usernameField;
         [SerializeField] private TMP_InputField passwordField;
+        [SerializeField] private Toggle rememberMeToggle;
         [SerializeField] private Button loginButton;
         [SerializeField] private ErrorPanel errorPanel;
 
@@ -19,26 +20,21 @@ namespace Project.Login
             var fields = GetComponentsInChildren<TMP_InputField>(true);
             usernameField = fields.FirstOrDefault(f => f.transform.parent.name == "Username");
             passwordField = fields.FirstOrDefault(f => f.transform.parent.name == "Password");
+            rememberMeToggle = GetComponentInChildren<Toggle>(true);
             loginButton = GetComponentInChildren<Button>(true);
             errorPanel = GetComponentInChildren<ErrorPanel>(true);
         }
 
         public override void InstallBindings()
         {
-            // This installs one SignalBus in the SceneContext.
-            // If the Signal spans multiple scenes, it should be put in a parent container like ProjectContext.
-            SignalBusInstaller.Install(Container);
-            Container.DeclareSignal<LoginSignal>();
-
-            Container.BindInstance(loginButton);
+            Container.BindInstance(rememberMeToggle);
             Container.BindInstance(errorPanel);
-
-            Container.BindInterfacesTo<LoginPrompt>()
+            
+            Container.Bind<LoginObservable>()
                 .AsSingle()
-                .WithArguments(usernameField, passwordField);
+                .WithArguments(usernameField, passwordField, loginButton);
 
-            Container.BindSignal<LoginSignal>()
-                .ToMethod(signal => Debug.Log($"Logging in {signal.User.Username}...", this));
+            Container.BindInterfacesTo<ErrorHandler>().AsSingle();
         }
     }
 }

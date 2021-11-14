@@ -1687,6 +1687,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   usernameField: {fileID: 7986755735798916826}
   passwordField: {fileID: 7986755735516138006}
+  rememberMeToggle: {fileID: 4987149572741240841}
   loginButton: {fileID: 1349854315203341514}
   errorPanel: {fileID: 3310003675942987488}
 --- !u!1 &7986755736386132641

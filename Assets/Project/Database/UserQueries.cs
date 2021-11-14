@@ -38,15 +38,15 @@ namespace Project.Database
         private bool CheckUsernameIsTaken(string username) =>
             users.CountDocuments(Builders<User>.Filter.Eq(u => u.Username, username)) > 0;
 
-        public bool TryLogin(string username, string password, out User user)
+        public User FindUser(string username, string password)
         {
             var filter = Builders<User>.Filter.Eq(u => u.Username, username);
-            user = users.Find(filter).SingleOrDefault();
-            if (user == default) return false;
+            var user = users.Find(filter).SingleOrDefault();
+            if (user == default) return default;
 
             var salt = Convert.FromBase64String(user.Salt);
             var actualPassword = Convert.FromBase64String(user.HashedPassword);
-            return hasher.VerifyHash(password, salt, actualPassword);
+            return hasher.VerifyHash(password, salt, actualPassword) ? user : default;
         }
     }
 }
