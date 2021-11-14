@@ -35,6 +35,10 @@ namespace Project.Login
                 .WithArguments(usernameField, passwordField, loginButton);
 
             Container.BindInterfacesTo<ErrorHandler>().AsSingle();
+            
+            Container.BindInterfacesAndSelfTo<RememberMe>()
+                .AsSingle()
+                .WithArguments(usernameField, passwordField);
         }
     }
 }
